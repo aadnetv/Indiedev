@@ -1,0 +1,53 @@
+/* Kanban board styles */
+.kanban-board {
+    min-height: calc(100vh - 120px);
+}
+
+.kanban-column {
+    background: var(--bs-dark);
+    border-radius: 4px;
+    padding: 1rem;
+    min-height: 500px;
+}
+
+.task-card {
+    cursor: move;
+    transition: transform 0.2s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+}
+
+.task-card.dragging {
+    opacity: 0.5;
+}
+
+.tasks-container {
+    min-height: 200px;
+    padding: 0.5rem;
+}
+
+/* Sidebar styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 48px 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+/* Priority badges */
+.bg-high {
+    background-color: var(--bs-danger);
+}
+
+.bg-medium {
+    background-color: var(--bs-warning);
+}
+
+.bg-low {
+    background-color: var(--bs-info);
+}
