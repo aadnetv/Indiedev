@@ -16,19 +16,63 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ project.name }}</h5>
                     <p class="card-text flex-grow-1">{{ project.description }}</p>
+                    
+                    <!-- Progress Section -->
+                    <div class="mt-3">
+                        <label class="form-label d-flex justify-content-between">
+                            <span>Progress</span>
+                            <span>{{ "%.1f"|format(project.completion_percentage) }}%</span>
+                        </label>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ project.completion_percentage }}%"
+                                 aria-valuenow="{{ project.completion_percentage }}" 
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <!-- Project Metrics -->
+                    <div class="mt-2 small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Estimated Hours:</span>
+                            <span>{{ project.total_estimated_hours }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Actual Hours:</span>
+                            <span>{{ project.actual_hours_spent }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Team Velocity:</span>
+                            <span>{{ "%.1f"|format(project.team_velocity) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Status and Dates -->
                     <div class="mt-3">
                         <span class="badge bg-{{ 'success' if project.status == 'active' else 'warning' if project.status == 'on_hold' else 'secondary' }}">
                             {{ project.status }}
                         </span>
-                        <p class="text-muted small mt-2">Started: {{ project.start_date.strftime('%Y-%m-%d') }}</p>
+                        <span class="badge bg-{{ 'success' if project.risk_status == 'low' else 'warning' if project.risk_status == 'medium' else 'danger' }} ms-1">
+                            {{ project.risk_status }} risk
+                        </span>
                     </div>
+                    
+                    <div class="mt-2 text-muted small">
+                        <div>Started: {{ project.start_date.strftime('%Y-%m-%d') }}</div>
+                        {% if project.target_completion_date %}
+                        <div>Target: {{ project.target_completion_date.strftime('%Y-%m-%d') }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Buttons -->
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <a href="{{ url_for('tasks.kanban_board', project_id=project.id) }}" class="btn btn-primary">
-                            View Kanban
+                            <i class="bi bi-kanban"></i> Kanban Board
                         </a>
                         <div class="btn-group">
-                            <a href="{{ url_for('projects.edit_project', id=project.id) }}" class="btn btn-outline-secondary">
-                                Edit
+                            <a href="{{ url_for('projects.edit_project', id=project.id) }}" 
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-pencil"></i> Edit
                             </a>
                         </div>
                     </div>

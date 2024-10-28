@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if task %}Edit{% else %}New{% endif %} Task</h2>
+    <form method="POST" class="mt-4">
+        <div class="mb-3">
+            <label for="title" class="form-label">Task Title</label>
+            <input type="text" class="form-control" id="title" name="title" required 
+                   value="{{ task.title if task else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{ task.description if task else '' }}</textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="priority" class="form-label">Priority</label>
+                <select class="form-control" id="priority" name="priority">
+                    <option value="low" {% if task and task.priority == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if task and task.priority == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if task and task.priority == 'high' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="due_date" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="due_date" name="due_date"
+                       value="{{ task.due_date.strftime('%Y-%m-%d') if task and task.due_date else '' }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="estimated_time" class="form-label">Estimated Time (minutes)</label>
+                <input type="number" class="form-control" id="estimated_time" name="estimated_time"
+                       value="{{ task.estimated_time if task else '0' }}" min="0">
+            </div>
+            {% if task %}
+            <div class="col-md-6 mb-3">
+                <label for="time_spent" class="form-label">Time Spent (minutes)</label>
+                <input type="number" class="form-control" id="time_spent" name="time_spent"
+                       value="{{ task.time_spent if task else '0' }}" min="0">
+            </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Save Task</button>
+        <a href="{{ url_for('tasks.kanban_board', project_id=project_id) }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
