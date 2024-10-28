@@ -21,6 +21,7 @@ def create_task(project_id):
         task.priority = request.form['priority']
         task.project_id = project_id
         task.estimated_time = int(request.form.get('estimated_time', 0))
+        task.status = request.args.get('status', 'todo')
         
         if request.form.get('due_date'):
             task.due_date = datetime.strptime(request.form['due_date'], '%Y-%m-%d')
@@ -64,6 +65,7 @@ def update_task_status(task_id):
         task.start_datetime = datetime.utcnow()
     elif new_status == 'done' and not task.end_datetime:
         task.end_datetime = datetime.utcnow()
+        task.completion_percentage = 100.0
         
         # Update project statistics
         project = task.project
@@ -79,5 +81,26 @@ def update_task_status(task_id):
         completed_tasks = Task.query.filter_by(project_id=task.project_id, status='done').count()
         project.completion_percentage = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
         
+    db.session.commit()
+    return jsonify({'success': True})
+
+@bp.route('/tasks/<int:task_id>/quick-update', methods=['POST'])
+def quick_update_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    task.completion_percentage = float(request.form['progress'])
+    task.time_spent = int(request.form['time_spent'])
+    db.session.commit()
+    return jsonify({'success': True})
+
+@bp.route('/tasks/<int:task_id>/update-time', methods=['POST'])
+def update_task_time(task_id):
+    task = Task.query.get_or_404(task_id)
+    elapsed = int(request.form['elapsed'])
+    task.time_spent += elapsed
+    
+    # Update completion percentage based on time spent
+    if task.estimated_time > 0:
+        task.completion_percentage = min(100.0, (task.time_spent / task.estimated_time * 100))
+    
     db.session.commit()
     return jsonify({'success': True})
